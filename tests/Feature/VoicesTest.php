@@ -31,7 +31,6 @@ class VoicesTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson([
-            'status'=>200,
             'message'=>'Voting completed successfully'
         ]);
         $this->assertDatabaseHas(Voice::class,
@@ -58,6 +57,7 @@ class VoicesTest extends TestCase
         $response = $this->actingAs($user, 'api')->postJson('api/voices',
             ['question_id' => $question->id, 'value' => '1']);
 
+        $response->assertStatus(500);
         $response->assertJson([
             'message' => 'The user is not allowed to vote to your question'
         ]);
@@ -75,8 +75,8 @@ class VoicesTest extends TestCase
         $response = $this->actingAs($voice_user, 'api')->postJson('api/voices',
             ['question_id' => $question->id, 'value' => '1', 'aaa' => 'bbb']);
 
+        $response->assertStatus(500);
         $response->assertJson([
-            'status' => 500,
             'message' => 'The user is not allowed to vote more than once'
         ]);
     }
@@ -93,8 +93,8 @@ class VoicesTest extends TestCase
         $response = $this->actingAs($voice_user, 'api')->postJson('api/voices',
             ['question_id' => $question->id, 'value' => '0']);
 
+        $response->assertStatus(201);
         $response->assertJson([
-            'status'=>201,
             'message'=>'update your voice'
         ]);
     }
